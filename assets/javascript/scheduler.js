@@ -63,8 +63,20 @@ database.ref().on("child_added", function(childSnapshot) {
     var trainStartPretty = moment.unix(trainStart).format("H HH");
   
     // Time until next train
-    var nextTrain = moment().diff(moment(nextTrain, "X"), "H HH");
+    var nextTrain = moment().add(nextTrain, "");
     // console.log(nextTrain);
+
+    var startTime = moment(trainStart, "HH:mm").subtract(1, "years");
+
+    var currentTime = moment();
+    
+    var timeDifference = moment().diff(moment(startTime), "minutes");
+
+
+    var untilNextTrain = timeDifference % trainFrequency;
+
+    var minutesAway =  trainFrequency - untilNextTrain;
+
   
     // Create the new row
     var newRow = $("<tr>").append(
@@ -72,7 +84,7 @@ database.ref().on("child_added", function(childSnapshot) {
       $("<td>").text(trainDestination),
       $("<td>").text(trainFrequency),
       $("<td>").text(nextTrain),
-      // $("<td>").text(minutesAway)
+      $("<td>").text(minutesAway)
     );
   
     // Append the new row to the table
