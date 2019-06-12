@@ -11,6 +11,8 @@ var firebaseConfig = {
   // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
 
+  var database = firebase.database();
+
   // Button for adding Trains
 $("#add-train-btn").on("click", function(event) {
     event.preventDefault();
@@ -18,7 +20,7 @@ $("#add-train-btn").on("click", function(event) {
     // Grabs user input
     var trainName = $("#train-name-input").val().trim();
     var trainDestination = $("#destination-input").val().trim();
-    var trainStart = moment($("#start-input").val().trim(), "MM/DD/YYYY").format("X");
+    var trainStart = moment($("#start-input").val().trim(), "LT").format("X");
     var trainFrequency = $("#frequency-input").val().trim();
   
     // Creates local "temporary" object for holding train data
@@ -31,12 +33,6 @@ $("#add-train-btn").on("click", function(event) {
   
     // Uploads train data to the database
     database.ref().push(newTrain);
-  
-    // Logs everything to console
-    console.log(newTrain.name);
-    console.log(newTrain.destination);
-    console.log(newTrain.start);
-    console.log(newTrain.frequency);
 
     alert("Train successfully added");
   
@@ -49,7 +45,7 @@ $("#add-train-btn").on("click", function(event) {
 
 // Create Firebase event for adding train to the database and a row in the html when a user adds an entry
 database.ref().on("child_added", function(childSnapshot) {
-    console.log(childSnapshot.val());
+    // console.log(childSnapshot.val());
   
     // Store everything into a variable.
     var trainName = childSnapshot.val().name;
@@ -58,25 +54,25 @@ database.ref().on("child_added", function(childSnapshot) {
     var trainFrequency = childSnapshot.val().frequency;
   
     // Train Info
-    console.log(trainName);
-    console.log(trainDestination);
-    console.log(trainStart);
-    console.log(trainFrequency);
+    // console.log(trainName);
+    // console.log(trainDestination);
+    // console.log(trainStart);
+    // console.log(trainFrequency);
   
     // Prettify the train start
     var trainStartPretty = moment.unix(trainStart).format("H HH");
   
     // Time until next train
     var nextTrain = moment().diff(moment(nextTrain, "X"), "H HH");
-    console.log(nextTrain);
+    // console.log(nextTrain);
   
     // Create the new row
     var newRow = $("<tr>").append(
       $("<td>").text(trainName),
       $("<td>").text(trainDestination),
-      $("<td>").text(trainStartPretty),
+      $("<td>").text(trainFrequency),
       $("<td>").text(nextTrain),
-      $("<td>").text(trainFrequency)
+      // $("<td>").text(minutesAway)
     );
   
     // Append the new row to the table
